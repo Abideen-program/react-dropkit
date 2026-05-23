@@ -5,8 +5,17 @@ Drag-and-drop, image previews, progress tracking — with zero backend opinions.
 
 [![npm version](https://img.shields.io/npm/v/react-dropkit.svg)](https://www.npmjs.com/package/react-dropkit)
 [![npm downloads](https://img.shields.io/npm/dm/react-dropkit.svg)](https://www.npmjs.com/package/react-dropkit)
-[![CI](https://github.com/YOUR_USERNAME/react-dropkit/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USERNAME/react-dropkit/actions)
+[![CI](https://github.com/Abideen-program/react-dropkit/actions/workflows/ci.yml/badge.svg)](https://github.com/Abideen-program/react-dropkit/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+
+# react-dropkit
+
+A modern, accessible, TypeScript-first React file upload library.
+
+[![npm version](https://img.shields.io/npm/v/react-dropkit.svg)](https://www.npmjs.com/package/react-dropkit)
+...
+
+📖 **[Documentation](https://abideen-program.github.io/react-dropkit/)** — full API reference, examples, and quick start guide.
 
 ---
 
@@ -306,4 +315,4 @@ npm run dev
 
 ## License
 
-MIT © [Your Name]
+MIT © [Abideen Olafimihan] · [Documentation](https://abideen-program.github.io/react-dropkit/) · [npm](https://npmjs.com/package/react-dropkit) · [GitHub](https://github.com/abideen-program/react-dropkit)

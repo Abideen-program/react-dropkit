@@ -6,11 +6,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/YOUR_USERNAME/react-dropkit"
+    "url": "https://github.com/abideen-program/react-dropkit"
   },
-  "homepage": "https://github.com/YOUR_USERNAME/react-dropkit#readme",
+"homepage": "https://abideen-program.github.io/react-dropkit/",
   "bugs": {
-    "url": "https://github.com/YOUR_USERNAME/react-dropkit/issues"
+    "url": "https://github.com/abideen-program/react-dropkit/issues"
   },
   "keywords": [
     "react",
