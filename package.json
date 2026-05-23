@@ -1,0 +1,73 @@
+{
+  "name": "react-dropkit",
+  "version": "0.1.0",
+  "description": "A modern, accessible, TypeScript-first React file upload library with drag-and-drop, previews, progress tracking, and zero backend opinions.",
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YOUR_USERNAME/react-dropkit"
+  },
+  "homepage": "https://github.com/YOUR_USERNAME/react-dropkit#readme",
+  "bugs": {
+    "url": "https://github.com/YOUR_USERNAME/react-dropkit/issues"
+  },
+  "keywords": [
+    "react",
+    "file-upload",
+    "dropzone",
+    "drag-and-drop",
+    "file-picker",
+    "typescript",
+    "accessible",
+    "a11y",
+    "image-preview",
+    "progress-bar",
+    "upload",
+    "react-component"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "tsc --noEmit",
+    "prepublishOnly": "npm run build",
+    "release": "npm run build && npm publish --access public"
+  },
+  "peerDependencies": {
+    "react": ">=17",
+    "react-dom": ">=17"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.4.0",
+    "@testing-library/react": "^15.0.0",
+    "@testing-library/user-event": "^14.5.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "@vitest/coverage-v8": "^1.6.0",
+    "jsdom": "^24.0.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.6.0"
+  }
+}
