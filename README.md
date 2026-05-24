@@ -13,7 +13,6 @@ Drag-and-drop, image previews, progress tracking — with zero backend opinions.
 A modern, accessible, TypeScript-first React file upload library.
 
 [![npm version](https://img.shields.io/npm/v/react-dropkit.svg)](https://www.npmjs.com/package/react-dropkit)
-...
 
 📖 **[Documentation](https://abideen-program.github.io/react-dropkit/)** — full API reference, examples, and quick start guide.
 
