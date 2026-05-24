@@ -1,438 +1,185 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>react-dropkit — Modern React File Upload</title>
-  <meta name="description" content="A modern, accessible, TypeScript-first React file upload library with drag-and-drop, image previews, progress tracking, and zero backend opinions." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>react-dropkit — Modern React File Upload</title>
+<meta name="description" content="A modern, accessible, TypeScript-first React file upload library. Drag-and-drop, image previews, progress tracking, zero backend opinions."/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%236ee7b7'/><polyline points='16,8 16,20' stroke='%230a0a0f' stroke-width='2.5' stroke-linecap='round' fill='none'/><polyline points='10,14 16,8 22,14' stroke='%230a0a0f' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/><line x1='8' y1='25' x2='24' y2='25' stroke='%230a0a0f' stroke-width='2.5' stroke-linecap='round'/></svg>"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+--bg:#080810;--bg2:#0f0f1a;--bg3:#16162a;--bg4:#1e1e30;
+--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);--border3:rgba(255,255,255,0.16);
+--text:#eeeef5;--text2:#8888aa;--text3:#4a4a6a;
+--green:#6ee7b7;--green2:#34d399;--green-dim:rgba(110,231,183,0.1);--green-glow:rgba(110,231,183,0.2);
+--blue:#818cf8;--blue-dim:rgba(129,140,248,0.1);
+--yellow:#fcd34d;--red:#f87171;
+--ff-display:'Bricolage Grotesque',sans-serif;
+--ff-body:'Instrument Sans',sans-serif;
+--ff-mono:'JetBrains Mono',monospace;
+--nav-h:60px;--radius:10px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--ff-body);font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,0.03) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;z-index:0}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
 
-    :root {
-      --bg: #0a0a0f;
-      --bg2: #111118;
-      --bg3: #18181f;
-      --border: rgba(255,255,255,0.07);
-      --border2: rgba(255,255,255,0.12);
-      --text: #f0f0f5;
-      --text2: #9090a8;
-      --text3: #5a5a72;
-      --accent: #6ee7b7;
-      --accent2: #34d399;
-      --accent-dim: rgba(110,231,183,0.12);
-      --accent-glow: rgba(110,231,183,0.25);
-      --blue: #818cf8;
-      --blue-dim: rgba(129,140,248,0.12);
-      --yellow: #fcd34d;
-      --red: #f87171;
-      --font-display: 'Syne', sans-serif;
-      --font-body: 'DM Sans', sans-serif;
-      --font-mono: 'DM Mono', monospace;
-      --radius: 12px;
-      --nav-h: 64px;
-    }
+/* NAV */
+nav{position:sticky;top:0;z-index:200;height:var(--nav-h);background:rgba(8,8,16,0.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav-inner{height:100%;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.nav-logo{display:flex;align-items:center;gap:9px;text-decoration:none;font-family:var(--ff-display);font-weight:700;font-size:17px;color:var(--text)}
+.logo-mark{width:30px;height:30px;border-radius:7px;background:linear-gradient(135deg,var(--green),var(--blue));display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.nav-links{display:flex;align-items:center;gap:2px}
+.nav-links a{font-size:14px;font-weight:500;color:var(--text2);text-decoration:none;padding:6px 13px;border-radius:7px;transition:all .15s;white-space:nowrap}
+.nav-links a:hover{color:var(--text);background:var(--bg3)}
+.nav-demo{background:var(--green-dim)!important;color:var(--green)!important;border:1px solid rgba(110,231,183,0.2)!important}
+.nav-demo:hover{background:rgba(110,231,183,0.18)!important}
+.nav-npm{background:var(--green)!important;color:#080810!important;font-weight:600!important}
+.nav-npm:hover{background:var(--green2)!important}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;border:none;background:none}
+.hamburger span{display:block;width:22px;height:2px;background:var(--text2);border-radius:2px;transition:all .25s}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0)}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.mobile-menu{display:none;position:fixed;top:var(--nav-h);left:0;right:0;background:var(--bg2);border-bottom:1px solid var(--border2);padding:16px 24px 24px;z-index:199;flex-direction:column;gap:4px}
+.mobile-menu.open{display:flex}
+.mobile-menu a{font-size:15px;font-weight:500;color:var(--text2);text-decoration:none;padding:10px 14px;border-radius:8px;transition:all .15s}
+.mobile-menu a:hover{color:var(--text);background:var(--bg3)}
+.mobile-demo{color:var(--green)!important}
 
-    html { scroll-behavior: smooth; }
+/* HERO */
+.hero{padding:80px 0 70px}
+.hero-inner{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.hero-badge{display:inline-flex;align-items:center;gap:7px;background:var(--green-dim);border:1px solid rgba(110,231,183,0.18);color:var(--green);border-radius:99px;font-size:11px;font-weight:600;letter-spacing:.08em;padding:5px 13px;text-transform:uppercase;margin-bottom:24px}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+.hero h1{font-family:var(--ff-display);font-size:clamp(38px,5.5vw,62px);font-weight:800;line-height:1.05;letter-spacing:-1.5px;margin-bottom:20px}
+.hero h1 em{font-style:normal;color:var(--green)}
+.hero-sub{font-size:17px;color:var(--text2);line-height:1.7;margin-bottom:32px;font-weight:400}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:36px}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:11px 22px;border-radius:9px;font-size:14px;font-weight:600;text-decoration:none;border:none;cursor:pointer;transition:all .2s;font-family:var(--ff-body)}
+.btn-primary{background:var(--green);color:#080810}
+.btn-primary:hover{background:var(--green2);transform:translateY(-1px)}
+.btn-secondary{background:var(--bg3);color:var(--text2);border:1px solid var(--border2)}
+.btn-secondary:hover{color:var(--text);background:var(--bg4);border-color:var(--border3)}
+.btn-demo{background:var(--green-dim);color:var(--green);border:1px solid rgba(110,231,183,0.2)}
+.btn-demo:hover{background:rgba(110,231,183,0.18)}
+.install-box{display:inline-flex;align-items:center;gap:10px;background:var(--bg3);border:1px solid var(--border2);border-radius:9px;padding:11px 16px}
+.install-box code{font-family:var(--ff-mono);font-size:13px;color:var(--green)}
+.copy-btn{background:var(--bg4);border:1px solid var(--border);color:var(--text3);padding:4px 10px;border-radius:5px;font-size:11px;cursor:pointer;font-family:var(--ff-body);transition:all .15s}
+.copy-btn:hover{color:var(--text2)}
 
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--font-body);
-      font-size: 16px;
-      line-height: 1.7;
-      -webkit-font-smoothing: antialiased;
-    }
+/* HERO CODE CARD */
+.hero-card{background:var(--bg2);border:1px solid var(--border2);border-radius:14px;overflow:hidden;position:relative}
+.hero-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(110,231,183,0.04) 0%,transparent 60%);pointer-events:none}
+.card-topbar{display:flex;align-items:center;gap:7px;padding:13px 16px;border-bottom:1px solid var(--border);background:var(--bg3)}
+.dot{width:10px;height:10px;border-radius:50%}
+.dot-red{background:#f87171}.dot-yellow{background:#fcd34d}.dot-green{background:#6ee7b7}
+.card-filename{font-family:var(--ff-mono);font-size:11px;color:var(--text3);margin-left:auto}
+.card-pre{padding:22px;font-family:var(--ff-mono);font-size:12.5px;line-height:1.8;overflow-x:auto}
 
-    /* ── Scrollbar ── */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 3px; }
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin:60px 0}
+.stat{padding:24px 20px;background:var(--bg2);border-right:1px solid var(--border);text-align:center}
+.stat:last-child{border-right:none}
+.stat-val{font-family:var(--ff-display);font-size:30px;font-weight:800;color:var(--text);line-height:1;margin-bottom:4px}
+.stat-lbl{font-size:12px;color:var(--text3);font-weight:500}
 
-    /* ── Layout ── */
-    .wrapper { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+/* SECTIONS */
+section{padding:72px 0}
+.sec-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:10px}
+.sec-title{font-family:var(--ff-display);font-size:clamp(26px,3.5vw,38px);font-weight:800;letter-spacing:-.8px;line-height:1.1;margin-bottom:14px}
+.sec-sub{font-size:16px;color:var(--text2);max-width:500px}
 
-    /* ── Nav ── */
-    nav {
-      position: sticky; top: 0; z-index: 100;
-      height: var(--nav-h);
-      background: rgba(10,10,15,0.85);
-      backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border);
-      display: flex; align-items: center;
-    }
-    .nav-inner {
-      width: 100%; max-width: 1100px; margin: 0 auto; padding: 0 24px;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .nav-logo {
-      font-family: var(--font-display);
-      font-weight: 800; font-size: 18px;
-      color: var(--text);
-      text-decoration: none;
-      display: flex; align-items: center; gap: 10px;
-    }
-    .nav-logo-icon {
-      width: 32px; height: 32px; border-radius: 8px;
-      background: linear-gradient(135deg, var(--accent), var(--blue));
-      display: flex; align-items: center; justify-content: center;
-    }
-    .nav-links { display: flex; align-items: center; gap: 8px; }
-    .nav-links a {
-      font-size: 14px; font-weight: 500; color: var(--text2);
-      text-decoration: none; padding: 6px 14px; border-radius: 8px;
-      transition: all 0.15s;
-    }
-    .nav-links a:hover { color: var(--text); background: var(--bg3); }
-    .nav-cta {
-      background: var(--accent) !important;
-      color: #0a0a0f !important;
-      font-weight: 600 !important;
-    }
-    .nav-cta:hover { background: var(--accent2) !important; }
+/* FEATURES */
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:48px}
+.feat{background:var(--bg);padding:26px 24px 30px;transition:background .2s;position:relative}
+.feat:hover{background:var(--bg2)}
+.feat-icon{font-size:22px;margin-bottom:14px;display:block}
+.feat h3{font-family:var(--ff-display);font-size:15px;font-weight:700;margin-bottom:8px}
+.feat p{font-size:13.5px;color:var(--text2);line-height:1.65}
+.feat code{font-family:var(--ff-mono);font-size:11.5px;color:var(--green);background:var(--green-dim);padding:1px 5px;border-radius:3px}
 
-    /* ── Hero ── */
-    .hero {
-      padding: 100px 0 80px;
-      position: relative; overflow: hidden;
-    }
-    .hero-glow {
-      position: absolute; top: -100px; left: 50%; transform: translateX(-50%);
-      width: 600px; height: 400px;
-      background: radial-gradient(ellipse, rgba(110,231,183,0.08) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .hero-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: var(--accent-dim); border: 1px solid rgba(110,231,183,0.2);
-      color: var(--accent); border-radius: 99px;
-      font-size: 12px; font-weight: 600; letter-spacing: 0.06em;
-      padding: 5px 14px; text-transform: uppercase;
-      margin-bottom: 28px;
-    }
-    .hero h1 {
-      font-family: var(--font-display);
-      font-size: clamp(42px, 7vw, 76px);
-      font-weight: 800; line-height: 1.05;
-      letter-spacing: -2px;
-      margin-bottom: 24px;
-    }
-    .hero h1 span { color: var(--accent); }
-    .hero-sub {
-      font-size: 18px; font-weight: 300; color: var(--text2);
-      max-width: 560px; line-height: 1.65;
-      margin-bottom: 40px;
-    }
-    .hero-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-    .btn {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 12px 24px; border-radius: 10px;
-      font-size: 15px; font-weight: 600;
-      text-decoration: none; cursor: pointer;
-      border: none; transition: all 0.2s;
-    }
-    .btn-primary {
-      background: var(--accent); color: #0a0a0f;
-    }
-    .btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
-    .btn-ghost {
-      background: transparent; color: var(--text2);
-      border: 1px solid var(--border2);
-    }
-    .btn-ghost:hover { color: var(--text); border-color: var(--border2); background: var(--bg3); }
-    .hero-npm {
-      margin-top: 40px;
-      display: inline-flex; align-items: center; gap: 10px;
-      background: var(--bg3); border: 1px solid var(--border);
-      border-radius: 10px; padding: 12px 20px;
-    }
-    .hero-npm code {
-      font-family: var(--font-mono); font-size: 14px;
-      color: var(--accent);
-    }
-    .copy-btn {
-      background: var(--bg2); border: 1px solid var(--border);
-      color: var(--text2); padding: 4px 10px; border-radius: 6px;
-      font-size: 12px; cursor: pointer; transition: all 0.15s;
-      font-family: var(--font-body);
-    }
-    .copy-btn:hover { color: var(--text); background: var(--border); }
+/* CODE EXAMPLES */
+.ex-wrap{margin-top:40px}
+.tabs{display:flex;gap:0;border:1px solid var(--border2);border-bottom:none;border-radius:10px 10px 0 0;overflow:hidden;background:var(--bg3)}
+.tab-btn{padding:10px 18px;background:none;border:none;border-right:1px solid var(--border);font-size:13px;font-weight:500;color:var(--text3);cursor:pointer;font-family:var(--ff-mono);transition:all .15s;white-space:nowrap}
+.tab-btn:last-child{border-right:none}
+.tab-btn.active{color:var(--green);background:var(--bg2)}
+.tab-btn:hover:not(.active){color:var(--text2);background:var(--bg4)}
+.tab-panel{display:none}.tab-panel.active{display:block}
+.code-wrap{background:var(--bg2);border:1px solid var(--border2);border-radius:0 0 10px 10px;overflow:hidden}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-bottom:1px solid var(--border);background:var(--bg3)}
+.code-fname{font-family:var(--ff-mono);font-size:11px;color:var(--text3)}
+.code-copy{background:var(--bg2);border:1px solid var(--border);color:var(--text3);padding:3px 9px;border-radius:5px;font-size:11px;cursor:pointer;font-family:var(--ff-body);transition:all .15s}
+.code-copy:hover{color:var(--text2)}
+pre{padding:22px 24px;overflow-x:auto;font-family:var(--ff-mono);font-size:13px;line-height:1.8;tab-size:2}
+.kw{color:#c084fc}.fn{color:#60a5fa}.str{color:var(--green)}.cmt{color:var(--text3);font-style:italic}.tag{color:#f472b6}.attr{color:#fb923c}.num{color:var(--yellow)}.type{color:#67e8f9}
 
-    /* ── Stats bar ── */
-    .stats {
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      padding: 28px 0;
-      display: flex; gap: 0; flex-wrap: wrap;
-    }
-    .stat {
-      flex: 1; min-width: 140px;
-      padding: 0 32px;
-      border-right: 1px solid var(--border);
-    }
-    .stat:first-child { padding-left: 0; }
-    .stat:last-child { border-right: none; }
-    .stat-value {
-      font-family: var(--font-display);
-      font-size: 28px; font-weight: 800;
-      color: var(--text);
-      line-height: 1;
-      margin-bottom: 4px;
-    }
-    .stat-label { font-size: 13px; color: var(--text3); }
+/* API TABLES */
+.tbl-wrap{border:1px solid var(--border);border-radius:10px;overflow:hidden;overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:520px}
+thead th{text-align:left;padding:10px 16px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border);background:var(--bg3)}
+tbody tr{border-bottom:1px solid var(--border);transition:background .12s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--bg2)}
+td{padding:12px 16px;vertical-align:top}
+td:first-child{font-family:var(--ff-mono);font-size:12px;color:var(--green);white-space:nowrap}
+td:nth-child(2){font-family:var(--ff-mono);font-size:11px;color:var(--blue)}
+td:last-child{color:var(--text2);font-size:13px;line-height:1.6}
+.prop-group{margin-bottom:52px}
+.prop-title{font-family:var(--ff-display);font-size:19px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.prop-title code{font-family:var(--ff-mono);font-size:15px;background:var(--bg3);padding:3px 10px;border-radius:6px;color:var(--green);font-weight:400}
 
-    /* ── Sections ── */
-    section { padding: 80px 0; }
-    .section-label {
-      font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
-      text-transform: uppercase; color: var(--accent);
-      margin-bottom: 12px;
-    }
-    .section-title {
-      font-family: var(--font-display);
-      font-size: clamp(28px, 4vw, 40px);
-      font-weight: 800; letter-spacing: -1px;
-      margin-bottom: 16px; line-height: 1.1;
-    }
-    .section-sub { font-size: 17px; color: var(--text2); max-width: 520px; }
+/* COMPARE */
+.cmp-tbl{width:100%;border-collapse:collapse;font-size:13.5px;min-width:480px}
+.cmp-tbl th{padding:13px 18px;text-align:left;font-family:var(--ff-display);font-size:14px;font-weight:700;border-bottom:1px solid var(--border);background:var(--bg3)}
+.cmp-tbl th:nth-child(3){color:var(--green)}
+.cmp-tbl td{padding:12px 18px;border-bottom:1px solid var(--border);color:var(--text2)}
+.cmp-tbl tr:last-child td{border-bottom:none}
+.cmp-tbl tr:hover td{background:var(--bg2)}
+.cmp-tbl td:first-child{color:var(--text);font-weight:500}
+.yes{color:var(--green)}.no{color:var(--red)}.par{color:var(--yellow);font-size:12px}
 
-    /* ── Feature grid ── */
-    .features {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1px;
-      background: var(--border);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-      margin-top: 56px;
-    }
-    .feature {
-      background: var(--bg);
-      padding: 28px 28px 32px;
-      transition: background 0.2s;
-    }
-    .feature:hover { background: var(--bg2); }
-    .feature-icon {
-      width: 40px; height: 40px; border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 16px; font-size: 18px;
-    }
-    .feature-icon.green { background: var(--accent-dim); }
-    .feature-icon.blue { background: var(--blue-dim); }
-    .feature-icon.yellow { background: rgba(252,211,77,0.1); }
-    .feature h3 {
-      font-family: var(--font-display);
-      font-size: 16px; font-weight: 700;
-      margin-bottom: 8px;
-    }
-    .feature p { font-size: 14px; color: var(--text2); line-height: 1.6; }
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:44px 0;text-align:center}
+footer p{font-size:14px;color:var(--text3);line-height:1.9}
+footer a{color:var(--text2);text-decoration:none;transition:color .15s}
+footer a:hover{color:var(--green)}
 
-    /* ── Code blocks ── */
-    .code-section { padding: 80px 0; }
-    .tabs {
-      display: flex; gap: 0;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 0;
-    }
-    .tab-btn {
-      padding: 10px 20px; background: none; border: none;
-      font-size: 13px; font-weight: 500;
-      color: var(--text3); cursor: pointer;
-      border-bottom: 2px solid transparent;
-      transition: all 0.15s;
-      font-family: var(--font-mono);
-    }
-    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
-    .tab-btn:hover:not(.active) { color: var(--text2); }
-    .code-block {
-      background: var(--bg2);
-      border: 1px solid var(--border); border-top: none;
-      border-radius: 0 0 var(--radius) var(--radius);
-      overflow: hidden;
-    }
-    .code-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 12px 20px;
-      border-bottom: 1px solid var(--border);
-      background: var(--bg3);
-    }
-    .code-filename { font-size: 12px; color: var(--text3); font-family: var(--font-mono); }
-    .code-copy {
-      background: var(--bg2); border: 1px solid var(--border);
-      color: var(--text3); padding: 3px 10px; border-radius: 5px;
-      font-size: 11px; cursor: pointer; font-family: var(--font-body);
-      transition: all 0.15s;
-    }
-    .code-copy:hover { color: var(--text); }
-    pre {
-      padding: 24px; overflow-x: auto;
-      font-family: var(--font-mono); font-size: 13.5px;
-      line-height: 1.75; tab-size: 2;
-    }
-    .tab-panel { display: none; }
-    .tab-panel.active { display: block; }
-
-    /* ── Syntax colours ── */
-    .kw { color: #c084fc; }
-    .fn { color: #60a5fa; }
-    .str { color: var(--accent); }
-    .cmt { color: var(--text3); font-style: italic; }
-    .tag { color: #f472b6; }
-    .attr { color: #fb923c; }
-    .num { color: var(--yellow); }
-    .type { color: #67e8f9; }
-
-    /* ── Props table ── */
-    .props-section { padding: 80px 0; }
-    .props-group { margin-bottom: 56px; }
-    .props-group-title {
-      font-family: var(--font-display);
-      font-size: 20px; font-weight: 700;
-      margin-bottom: 16px;
-      display: flex; align-items: center; gap: 10px;
-    }
-    .props-group-title code {
-      font-family: var(--font-mono); font-size: 16px;
-      background: var(--bg3); padding: 3px 10px; border-radius: 6px;
-      color: var(--accent);
-    }
-    table {
-      width: 100%; border-collapse: collapse;
-      font-size: 14px;
-    }
-    thead th {
-      text-align: left; padding: 10px 16px;
-      font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
-      text-transform: uppercase; color: var(--text3);
-      border-bottom: 1px solid var(--border);
-      background: var(--bg3);
-    }
-    thead th:first-child { border-radius: var(--radius) 0 0 0; }
-    thead th:last-child { border-radius: 0 var(--radius) 0 0; }
-    tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
-    tbody tr:last-child { border-bottom: none; }
-    tbody tr:hover { background: var(--bg2); }
-    td { padding: 12px 16px; vertical-align: top; }
-    td:first-child { font-family: var(--font-mono); font-size: 13px; color: var(--accent); }
-    td:nth-child(2) { font-family: var(--font-mono); font-size: 12px; color: var(--blue); }
-    td:last-child { color: var(--text2); font-size: 13px; line-height: 1.6; }
-    .table-wrap {
-      border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;
-    }
-
-    /* ── Comparison ── */
-    .compare-section { padding: 80px 0; }
-    .compare-table { width: 100%; border-collapse: collapse; font-size: 14px; }
-    .compare-table th {
-      padding: 14px 20px; text-align: left;
-      font-family: var(--font-display); font-size: 15px; font-weight: 700;
-      border-bottom: 1px solid var(--border);
-      background: var(--bg3);
-    }
-    .compare-table th:nth-child(3) { color: var(--accent); }
-    .compare-table td { padding: 13px 20px; border-bottom: 1px solid var(--border); color: var(--text2); }
-    .compare-table tr:last-child td { border-bottom: none; }
-    .compare-table tr:hover td { background: var(--bg2); }
-    .compare-table td:first-child { color: var(--text); font-weight: 500; }
-    .yes { color: var(--accent); font-size: 16px; }
-    .no { color: var(--red); font-size: 16px; }
-    .partial { color: var(--yellow); font-size: 14px; }
-
-    /* ── Quick start ── */
-    .quickstart { padding: 80px 0; }
-    .steps { display: flex; flex-direction: column; gap: 0; margin-top: 48px; }
-    .step {
-      display: flex; gap: 24px;
-      padding: 32px 0;
-      border-bottom: 1px solid var(--border);
-    }
-    .step:last-child { border-bottom: none; }
-    .step-num {
-      width: 36px; height: 36px; flex-shrink: 0;
-      border-radius: 50%;
-      background: var(--accent-dim); border: 1px solid rgba(110,231,183,0.3);
-      color: var(--accent);
-      font-family: var(--font-display); font-size: 14px; font-weight: 800;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .step-body { flex: 1; }
-    .step-title {
-      font-family: var(--font-display); font-size: 18px; font-weight: 700;
-      margin-bottom: 10px;
-    }
-    .step-desc { font-size: 14px; color: var(--text2); margin-bottom: 16px; }
-    .inline-code {
-      background: var(--bg3); border: 1px solid var(--border);
-      border-radius: 8px; padding: 12px 16px;
-      font-family: var(--font-mono); font-size: 13px;
-      color: var(--accent);
-    }
-
-    /* ── GitHub Pages callout ── */
-    .callout {
-      background: var(--accent-dim); border: 1px solid rgba(110,231,183,0.2);
-      border-radius: var(--radius); padding: 20px 24px;
-      display: flex; gap: 14px; align-items: flex-start;
-      margin-top: 24px;
-    }
-    .callout-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
-    .callout-text { font-size: 14px; color: var(--text2); line-height: 1.6; }
-    .callout-text strong { color: var(--accent); }
-
-    /* ── Footer ── */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 48px 0;
-      text-align: center;
-    }
-    footer p { font-size: 14px; color: var(--text3); line-height: 1.8; }
-    footer a { color: var(--text2); text-decoration: none; }
-    footer a:hover { color: var(--accent); }
-
-    /* ── Sidebar layout for docs ── */
-    .docs-layout {
-      display: grid;
-      grid-template-columns: 220px 1fr;
-      gap: 48px;
-      align-items: start;
-      padding-top: 48px;
-    }
-    .sidebar {
-      position: sticky; top: calc(var(--nav-h) + 24px);
-    }
-    .sidebar-group { margin-bottom: 28px; }
-    .sidebar-group-title {
-      font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
-      text-transform: uppercase; color: var(--text3);
-      margin-bottom: 8px; padding: 0 12px;
-    }
-    .sidebar-link {
-      display: block; padding: 6px 12px; border-radius: 7px;
-      font-size: 14px; color: var(--text2); text-decoration: none;
-      transition: all 0.15s;
-    }
-    .sidebar-link:hover { color: var(--text); background: var(--bg3); }
-    .sidebar-link.active { color: var(--accent); background: var(--accent-dim); }
-
-    /* ── Responsive ── */
-    @media (max-width: 768px) {
-      .docs-layout { grid-template-columns: 1fr; }
-      .sidebar { display: none; }
-      .stat { min-width: 50%; border-right: none; padding: 12px 0; }
-      .nav-links a:not(.nav-cta) { display: none; }
-    }
-  </style>
+/* RESPONSIVE */
+@media(max-width:900px){
+.hero-inner{grid-template-columns:1fr}
+.hero-card{display:none}
+.feat-grid{grid-template-columns:repeat(2,1fr)}
+.stats-row{grid-template-columns:repeat(2,1fr)}
+.stat:nth-child(2){border-right:none}
+.stat:nth-child(3){border-top:1px solid var(--border);border-right:1px solid var(--border)}
+.stat:nth-child(4){border-top:1px solid var(--border)}
+}
+@media(max-width:640px){
+.nav-links{display:none}
+.hamburger{display:flex}
+.feat-grid{grid-template-columns:1fr}
+.stats-row{grid-template-columns:repeat(2,1fr)}
+.hero h1{font-size:36px}
+.hero-sub{font-size:15px}
+.tabs{overflow-x:auto}
+section{padding:52px 0}
+}
+</style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
-  <div class="nav-inner">
+  <div class="wrap nav-inner">
     <a href="#" class="nav-logo">
-      <div class="nav-logo-icon">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0a0a0f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <div class="logo-mark">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#080810" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/>
           <path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/>
         </svg>
@@ -441,145 +188,135 @@
     </a>
     <div class="nav-links">
       <a href="#quickstart">Quick Start</a>
-      <a href="#api">API</a>
       <a href="#examples">Examples</a>
+      <a href="#api">API</a>
+      <a href="demo.html" class="nav-demo">✦ Live Demo</a>
       <a href="https://github.com/abideen-program/react-dropkit" target="_blank">GitHub</a>
-      <a href="https://npmjs.com/package/react-dropkit" target="_blank" class="nav-cta">npm</a>
+      <a href="https://npmjs.com/package/react-dropkit" target="_blank" class="nav-npm">npm</a>
     </div>
+    <button class="hamburger" onclick="toggleMenu(this)" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </nav>
 
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#quickstart" onclick="closeMenu()">Quick Start</a>
+  <a href="#examples" onclick="closeMenu()">Examples</a>
+  <a href="#api" onclick="closeMenu()">API Reference</a>
+  <a href="demo.html" class="mobile-demo">✦ Live Demo</a>
+  <a href="https://github.com/abideen-program/react-dropkit" target="_blank">GitHub</a>
+  <a href="https://npmjs.com/package/react-dropkit" target="_blank">npm</a>
+</div>
+
 <!-- HERO -->
-<div class="wrapper">
-  <section class="hero">
-    <div class="hero-glow"></div>
-    <div class="hero-badge">
-      <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><circle cx="5" cy="5" r="5"/></svg>
-      v0.1.0 — Now on npm
-    </div>
-    <h1>File uploads,<br><span>finally done right.</span></h1>
-    <p class="hero-sub">
-      A modern, accessible, TypeScript-first React library for file uploads.
-      Drag-and-drop, image previews, progress tracking — with zero backend opinions.
-    </p>
-    <div class="hero-actions">
-      <a href="#quickstart" class="btn btn-primary">Get started →</a>
-      <a href="#examples" class="btn btn-ghost">View examples</a>
-    </div>
-    <div class="hero-npm">
-      <code id="install-cmd">npm install react-dropkit</code>
-      <button class="copy-btn" onclick="copyInstall()">Copy</button>
+<div class="wrap">
+  <section class="hero" id="home">
+    <div class="hero-inner">
+      <div>
+        <div class="hero-badge"><span class="badge-dot"></span> v0.1.0 — Now on npm</div>
+        <h1>File uploads,<br><em>finally done right.</em></h1>
+        <p class="hero-sub">A modern, accessible, TypeScript-first React library for file uploads. Drag-and-drop, image previews, progress tracking — with zero backend opinions.</p>
+        <div class="hero-actions">
+          <a href="#quickstart" class="btn btn-primary">Get started →</a>
+          <a href="demo.html" class="btn btn-demo">✦ Live Demo</a>
+          <a href="https://github.com/abideen-program/react-dropkit" target="_blank" class="btn btn-secondary">GitHub</a>
+        </div>
+        <div class="install-box">
+          <code id="icmd">npm install react-dropkit</code>
+          <button class="copy-btn" onclick="copyInstall()">Copy</button>
+        </div>
+      </div>
+      <div class="hero-card">
+        <div class="card-topbar">
+          <span class="dot dot-red"></span>
+          <span class="dot dot-yellow"></span>
+          <span class="dot dot-green"></span>
+          <span class="card-filename">App.tsx</span>
+        </div>
+        <div class="card-pre"><span class="kw">import</span> { <span class="type">Dropzone</span> } <span class="kw">from</span> <span class="str">'react-dropkit'</span>
+
+<span class="kw">export default function</span> <span class="fn">App</span>() {
+  <span class="kw">return</span> (
+    <span class="tag">&lt;Dropzone</span>
+      <span class="attr">multiple</span>
+      <span class="attr">validation</span>={{
+        <span class="attr">accept</span>: [<span class="str">'image/*'</span>, <span class="str">'.pdf'</span>],
+        <span class="attr">maxSize</span>: <span class="num">5</span> * <span class="num">1024</span> * <span class="num">1024</span>,
+        <span class="attr">maxFiles</span>: <span class="num">5</span>,
+      }}
+      <span class="attr">onFilesChange</span>={(files) =>
+        <span class="fn">console</span>.log(files.length)
+      }
+      <span class="attr">onUpload</span>={<span class="kw">async</span> (file) => {
+        <span class="kw">const</span> fd = <span class="kw">new</span> <span class="fn">FormData</span>()
+        fd.<span class="fn">append</span>(<span class="str">'file'</span>, file.file)
+        <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'/api/upload'</span>, {
+          <span class="attr">method</span>: <span class="str">'POST'</span>, <span class="attr">body</span>: fd
+        })
+      }}
+    <span class="tag">/&gt;</span>
+  )
+}</div>
+      </div>
     </div>
   </section>
 </div>
 
 <!-- STATS -->
-<div style="border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
-  <div class="wrapper">
-    <div class="stats">
-      <div class="stat">
-        <div class="stat-value">~24KB</div>
-        <div class="stat-label">Bundle size (ESM)</div>
-      </div>
-      <div class="stat">
-        <div class="stat-value">45</div>
-        <div class="stat-label">Tests passing</div>
-      </div>
-      <div class="stat">
-        <div class="stat-value">0</div>
-        <div class="stat-label">Dependencies</div>
-      </div>
-      <div class="stat">
-        <div class="stat-value">100%</div>
-        <div class="stat-label">TypeScript</div>
-      </div>
-    </div>
+<div class="wrap">
+  <div class="stats-row">
+    <div class="stat"><div class="stat-val">~24<span style="font-size:18px;color:var(--text3)">KB</span></div><div class="stat-lbl">Bundle (ESM)</div></div>
+    <div class="stat"><div class="stat-val">45</div><div class="stat-lbl">Tests passing</div></div>
+    <div class="stat"><div class="stat-val">0</div><div class="stat-lbl">Dependencies</div></div>
+    <div class="stat"><div class="stat-val">100<span style="font-size:18px;color:var(--text3)">%</span></div><div class="stat-lbl">TypeScript</div></div>
   </div>
 </div>
 
 <!-- FEATURES -->
-<div class="wrapper">
-  <section>
-    <div class="section-label">Why react-dropkit</div>
-    <h2 class="section-title">Everything you need.<br>Nothing you don't.</h2>
-    <p class="section-sub">Built to solve the real gaps in existing file upload libraries — without the bloat.</p>
-
-    <div class="features">
-      <div class="feature">
-        <div class="feature-icon green">🎯</div>
-        <h3>TypeScript-first</h3>
-        <p>Full types out of the box. No <code style="font-family:var(--font-mono);font-size:12px;color:var(--accent)">@types/</code> package needed. Every prop, hook return, and callback is fully typed.</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon blue">♿</div>
-        <h3>Accessible by default</h3>
-        <p>ARIA roles, keyboard navigation (Enter/Space), screen reader announcements, and focus management — baked in from day one.</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon green">⚡</div>
-        <h3>ESM + CJS dual build</h3>
-        <p>Works in Next.js App Router, Pages Router, Vite, Remix, and Create React App. Fixes the ESM breakage found in react-dropzone.</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon yellow">🖼️</div>
-        <h3>Built-in previews</h3>
-        <p>Images get real thumbnails generated from the file itself. Other file types show clean icons with extension badges. No upload required.</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon blue">📊</div>
-        <h3>Per-file progress</h3>
-        <p>Each file gets its own animated progress bar. Status updates from Ready → Uploading → Uploaded or Failed with live ARIA announcements.</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon green">🧩</div>
-        <h3>Headless or styled</h3>
-        <p>Drop in <code style="font-family:var(--font-mono);font-size:12px;color:var(--accent)">&lt;Dropzone /&gt;</code> for instant UI, or use <code style="font-family:var(--font-mono);font-size:12px;color:var(--accent)">useFileUpload()</code> to build a completely custom experience.</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon yellow">🔒</div>
-        <h3>Smart validation</h3>
-        <p>Accepts MIME wildcards (<code style="font-family:var(--font-mono);font-size:12px;color:var(--accent)">image/*</code>), exact types, and extensions. Cross-browser including the Windows/Safari MIME bug fix.</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon blue">🔌</div>
-        <h3>Zero backend opinions</h3>
-        <p>Plug in your own upload logic — S3, Cloudinary, Supabase, your own API. The library handles UI state; you handle the transport.</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon green">🌲</div>
-        <h3>Tree-shakeable</h3>
-        <p>Import only what you use. If you only import <code style="font-family:var(--font-mono);font-size:12px;color:var(--accent)">useFileUpload</code>, only that ships to your users.</p>
-      </div>
+<div class="wrap">
+  <section id="features">
+    <div class="sec-label">Why react-dropkit</div>
+    <h2 class="sec-title">Everything you need.<br>Nothing you don't.</h2>
+    <p class="sec-sub">Built to fill the real gaps in existing file upload libraries — without the bloat.</p>
+    <div class="feat-grid">
+      <div class="feat"><span class="feat-icon">🎯</span><h3>TypeScript-first</h3><p>Full types out of the box. No <code>@types/</code> package needed. Every prop and hook return is fully typed.</p></div>
+      <div class="feat"><span class="feat-icon">♿</span><h3>Accessible by default</h3><p>ARIA roles, keyboard navigation, screen reader support, and focus management — baked in from day one.</p></div>
+      <div class="feat"><span class="feat-icon">⚡</span><h3>ESM + CJS dual build</h3><p>Works in Next.js App Router, Vite, Remix, and Create React App. Fixes the broken ESM found in react-dropzone.</p></div>
+      <div class="feat"><span class="feat-icon">🖼️</span><h3>Built-in previews</h3><p>Images get real thumbnails from the file itself. Other types show clean icons with extension badges. No upload required.</p></div>
+      <div class="feat"><span class="feat-icon">📊</span><h3>Per-file progress</h3><p>Each file gets its own animated progress bar with live status updates. Ready → Uploading → Uploaded or Failed.</p></div>
+      <div class="feat"><span class="feat-icon">🧩</span><h3>Headless or styled</h3><p>Use <code>&lt;Dropzone /&gt;</code> for instant UI, or <code>useFileUpload()</code> to build a completely custom experience.</p></div>
+      <div class="feat"><span class="feat-icon">🔒</span><h3>Smart validation</h3><p>Accepts MIME wildcards, exact types, and extensions. Includes the cross-browser Windows/Safari MIME bug fix.</p></div>
+      <div class="feat"><span class="feat-icon">🔌</span><h3>Zero backend opinions</h3><p>Plug in your own upload logic — S3, Cloudinary, Supabase, your own API. You handle transport, we handle UI.</p></div>
+      <div class="feat"><span class="feat-icon">🌲</span><h3>Tree-shakeable</h3><p>Import only what you use. If you only import <code>useFileUpload</code>, only that ships to your users.</p></div>
     </div>
   </section>
 </div>
 
 <!-- QUICK START -->
-<div class="wrapper">
-  <section class="quickstart" id="quickstart">
-    <div class="section-label">Quick Start</div>
-    <h2 class="section-title">Up and running<br>in 60 seconds.</h2>
+<div style="background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+<div class="wrap">
+  <section id="quickstart">
+    <div class="sec-label">Quick Start</div>
+    <h2 class="sec-title">Up and running in 60 seconds.</h2>
+    <div style="margin-top:40px;display:flex;flex-direction:column;gap:0">
 
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <div class="step-body">
-          <div class="step-title">Install the package</div>
-          <div class="step-desc">Works with React 17 and above.</div>
-          <div class="inline-code">npm install react-dropkit</div>
+      <div style="display:flex;gap:22px;padding:28px 0;border-bottom:1px solid var(--border)">
+        <div style="width:34px;height:34px;flex-shrink:0;border-radius:50%;background:var(--green-dim);border:1px solid rgba(110,231,183,0.25);color:var(--green);display:flex;align-items:center;justify-content:center;font-family:var(--ff-display);font-size:13px;font-weight:800">1</div>
+        <div style="flex:1">
+          <div style="font-family:var(--ff-display);font-size:17px;font-weight:700;margin-bottom:8px">Install the package</div>
+          <div style="font-size:14px;color:var(--text2);margin-bottom:14px">Works with React 17 and above.</div>
+          <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:12px 16px;font-family:var(--ff-mono);font-size:13px;color:var(--green)">npm install react-dropkit</div>
         </div>
       </div>
 
-      <div class="step">
-        <div class="step-num">2</div>
-        <div class="step-body">
-          <div class="step-title">Drop in the component</div>
-          <div class="step-desc">Import and use — no configuration needed to get started.</div>
-          <div class="code-block" style="border-top: 1px solid var(--border); border-radius: var(--radius);">
-            <div class="code-header">
-              <span class="code-filename">App.tsx</span>
-              <button class="code-copy" onclick="copyCode(this)">Copy</button>
-            </div>
+      <div style="display:flex;gap:22px;padding:28px 0;border-bottom:1px solid var(--border)">
+        <div style="width:34px;height:34px;flex-shrink:0;border-radius:50%;background:var(--green-dim);border:1px solid rgba(110,231,183,0.25);color:var(--green);display:flex;align-items:center;justify-content:center;font-family:var(--ff-display);font-size:13px;font-weight:800">2</div>
+        <div style="flex:1">
+          <div style="font-family:var(--ff-display);font-size:17px;font-weight:700;margin-bottom:8px">Drop in the component</div>
+          <div style="font-size:14px;color:var(--text2);margin-bottom:14px">Import and use — no configuration needed to get started.</div>
+          <div class="code-wrap" style="border-top:1px solid var(--border2);border-radius:8px">
+            <div class="code-header"><span class="code-fname">App.tsx</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
             <pre><span class="kw">import</span> { <span class="type">Dropzone</span> } <span class="kw">from</span> <span class="str">'react-dropkit'</span>
 
 <span class="kw">export default function</span> <span class="fn">App</span>() {
@@ -594,21 +331,17 @@
         </div>
       </div>
 
-      <div class="step">
-        <div class="step-num">3</div>
-        <div class="step-body">
-          <div class="step-title">Add your upload handler</div>
-          <div class="step-desc">Connect any backend — the library manages the UI state around your function.</div>
-          <div class="code-block" style="border-top: 1px solid var(--border); border-radius: var(--radius);">
-            <div class="code-header">
-              <span class="code-filename">App.tsx</span>
-              <button class="code-copy" onclick="copyCode(this)">Copy</button>
-            </div>
+      <div style="display:flex;gap:22px;padding:28px 0">
+        <div style="width:34px;height:34px;flex-shrink:0;border-radius:50%;background:var(--green-dim);border:1px solid rgba(110,231,183,0.25);color:var(--green);display:flex;align-items:center;justify-content:center;font-family:var(--ff-display);font-size:13px;font-weight:800">3</div>
+        <div style="flex:1">
+          <div style="font-family:var(--ff-display);font-size:17px;font-weight:700;margin-bottom:8px">Add your upload handler</div>
+          <div style="font-size:14px;color:var(--text2);margin-bottom:14px">Connect any backend — the library manages UI state around your function.</div>
+          <div class="code-wrap" style="border-top:1px solid var(--border2);border-radius:8px">
+            <div class="code-header"><span class="code-fname">App.tsx</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
             <pre><span class="tag">&lt;Dropzone</span>
   <span class="attr">onUpload</span>={<span class="kw">async</span> (file) => {
     <span class="kw">const</span> formData = <span class="kw">new</span> <span class="fn">FormData</span>()
     formData.<span class="fn">append</span>(<span class="str">'file'</span>, file.file)
-
     <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'/api/upload'</span>, {
       <span class="attr">method</span>: <span class="str">'POST'</span>,
       <span class="attr">body</span>: formData,
@@ -621,60 +354,45 @@
     </div>
   </section>
 </div>
+</div>
 
 <!-- EXAMPLES -->
-<div style="background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
-<div class="wrapper">
+<div class="wrap">
   <section id="examples">
-    <div class="section-label">Examples</div>
-    <h2 class="section-title">Every use case,<br>covered.</h2>
-
-    <div style="margin-top: 40px;">
-      <div class="tabs" style="border-radius: var(--radius) var(--radius) 0 0; border: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--bg3);">
-        <button class="tab-btn active" onclick="switchTab(this, 'tab-basic')">Basic</button>
-        <button class="tab-btn" onclick="switchTab(this, 'tab-headless')">Headless</button>
-        <button class="tab-btn" onclick="switchTab(this, 'tab-form')">With a form</button>
-        <button class="tab-btn" onclick="switchTab(this, 'tab-single')">Single file</button>
-        <button class="tab-btn" onclick="switchTab(this, 'tab-progress')">Progress tracking</button>
+    <div class="sec-label">Examples</div>
+    <h2 class="sec-title">Every use case, covered.</h2>
+    <div class="ex-wrap">
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab(this,'t-basic')">Basic</button>
+        <button class="tab-btn" onclick="switchTab(this,'t-headless')">Headless</button>
+        <button class="tab-btn" onclick="switchTab(this,'t-form')">With a form</button>
+        <button class="tab-btn" onclick="switchTab(this,'t-single')">Single file</button>
+        <button class="tab-btn" onclick="switchTab(this,'t-progress')">Progress</button>
       </div>
-
-      <div class="code-block" style="border-radius: 0 0 var(--radius) var(--radius);">
-
-        <!-- Basic -->
-        <div class="tab-panel active" id="tab-basic">
-          <div class="code-header">
-            <span class="code-filename">BasicUpload.tsx</span>
-            <button class="code-copy" onclick="copyCode(this)">Copy</button>
-          </div>
+      <div class="code-wrap">
+        <div class="tab-panel active" id="t-basic">
+          <div class="code-header"><span class="code-fname">BasicUpload.tsx</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
           <pre><span class="kw">import</span> { <span class="type">Dropzone</span> } <span class="kw">from</span> <span class="str">'react-dropkit'</span>
 
-<span class="cmt">// Drop in and go. Drag-and-drop, previews, validation — all included.</span>
 <span class="kw">export function</span> <span class="fn">BasicUpload</span>() {
   <span class="kw">return</span> (
     <span class="tag">&lt;Dropzone</span>
       <span class="attr">multiple</span>
       <span class="attr">validation</span>={{
-        <span class="attr">accept</span>: [<span class="str">'image/*'</span>, <span class="str">'.pdf'</span>, <span class="str">'.docx'</span>],
-        <span class="attr">maxSize</span>: <span class="num">10</span> * <span class="num">1024</span> * <span class="num">1024</span>, <span class="cmt">// 10MB</span>
+        <span class="attr">accept</span>: [<span class="str">'image/*'</span>, <span class="str">'.pdf'</span>],
+        <span class="attr">maxSize</span>: <span class="num">10</span> * <span class="num">1024</span> * <span class="num">1024</span>,
         <span class="attr">maxFiles</span>: <span class="num">5</span>,
       }}
-      <span class="attr">onFilesAdded</span>={(files) => <span class="fn">console</span>.log(<span class="str">'Added:'</span>, files)}
-      <span class="attr">onFilesChange</span>={(files) => <span class="fn">console</span>.log(<span class="str">'Current files:'</span>, files.length)}
+      <span class="attr">onFilesChange</span>={(files) => <span class="fn">console</span>.log(files.length)}
       <span class="attr">onError</span>={(err) => <span class="fn">console</span>.error(err)}
     <span class="tag">/&gt;</span>
   )
 }</pre>
         </div>
-
-        <!-- Headless -->
-        <div class="tab-panel" id="tab-headless">
-          <div class="code-header">
-            <span class="code-filename">CustomUpload.tsx</span>
-            <button class="code-copy" onclick="copyCode(this)">Copy</button>
-          </div>
+        <div class="tab-panel" id="t-headless">
+          <div class="code-header"><span class="code-fname">CustomUpload.tsx</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
           <pre><span class="kw">import</span> { <span class="fn">useFileUpload</span>, <span class="type">FileList</span> } <span class="kw">from</span> <span class="str">'react-dropkit'</span>
 
-<span class="cmt">// Full control over every pixel. The hook handles all the logic.</span>
 <span class="kw">export function</span> <span class="fn">CustomUpload</span>() {
   <span class="kw">const</span> {
     files, isDragActive, isDragReject,
@@ -682,41 +400,26 @@
     removeFile, uploadAll, clearFiles,
   } = <span class="fn">useFileUpload</span>({
     <span class="attr">multiple</span>: <span class="kw">true</span>,
-    <span class="attr">validation</span>: { <span class="attr">accept</span>: [<span class="str">'image/*'</span>], <span class="attr">maxSize</span>: <span class="num">5</span> * <span class="num">1024</span> * <span class="num">1024</span> },
-    <span class="attr">onUpload</span>: <span class="kw">async</span> (file) => {
-      <span class="cmt">// your upload logic here</span>
-    },
+    <span class="attr">validation</span>: { <span class="attr">accept</span>: [<span class="str">'image/*'</span>] },
+    <span class="attr">onUpload</span>: <span class="kw">async</span> (file) => { <span class="cmt">/* your logic */</span> },
   })
 
   <span class="kw">return</span> (
     <span class="tag">&lt;div&gt;</span>
-      <span class="tag">&lt;div</span>
-        {<span class="fn">...getRootProps</span>()}
-        <span class="attr">style</span>={{ <span class="attr">border</span>: <span class="str">`2px dashed <span class="kw">${</span>isDragReject ? <span class="str">'red'</span> : isDragActive ? <span class="str">'blue'</span> : <span class="str">'gray'</span><span class="kw">}</span>`</span> }}
+      <span class="tag">&lt;div</span> {<span class="fn">...getRootProps</span>()}
+        <span class="attr">style</span>={{ <span class="attr">border</span>: <span class="str">`2px dashed <span class="kw">${</span>isDragReject ? <span class="str">'red'</span> : <span class="str">'gray'</span><span class="kw">}</span>`</span> }}
       <span class="tag">&gt;</span>
         <span class="tag">&lt;input</span> {<span class="fn">...getInputProps</span>()} <span class="attr">ref</span>={inputRef} <span class="tag">/&gt;</span>
-        <span class="tag">&lt;p&gt;</span>{isDragActive ? <span class="str">'Drop here!'</span> : <span class="str">'Click or drag files'</span>}<span class="tag">&lt;/p&gt;</span>
+        <span class="tag">&lt;p&gt;</span>{isDragActive ? <span class="str">'Drop here!'</span> : <span class="str">'Click or drag'</span>}<span class="tag">&lt;/p&gt;</span>
       <span class="tag">&lt;/div&gt;</span>
-
       <span class="tag">&lt;FileList</span> <span class="attr">files</span>={files} <span class="attr">onRemove</span>={removeFile} <span class="tag">/&gt;</span>
-
-      {files.length > <span class="num">0</span> &amp;&amp; (
-        <span class="tag">&lt;div&gt;</span>
-          <span class="tag">&lt;button</span> <span class="attr">onClick</span>={uploadAll}<span class="tag">&gt;</span>Upload All<span class="tag">&lt;/button&gt;</span>
-          <span class="tag">&lt;button</span> <span class="attr">onClick</span>={clearFiles}<span class="tag">&gt;</span>Clear<span class="tag">&lt;/button&gt;</span>
-        <span class="tag">&lt;/div&gt;</span>
-      )}
+      <span class="tag">&lt;button</span> <span class="attr">onClick</span>={uploadAll}<span class="tag">&gt;</span>Upload All<span class="tag">&lt;/button&gt;</span>
     <span class="tag">&lt;/div&gt;</span>
   )
 }</pre>
         </div>
-
-        <!-- Form -->
-        <div class="tab-panel" id="tab-form">
-          <div class="code-header">
-            <span class="code-filename">ProfileForm.tsx</span>
-            <button class="code-copy" onclick="copyCode(this)">Copy</button>
-          </div>
+        <div class="tab-panel" id="t-form">
+          <div class="code-header"><span class="code-fname">ProfileForm.tsx</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
           <pre><span class="kw">import</span> { useState } <span class="kw">from</span> <span class="str">'react'</span>
 <span class="kw">import</span> { <span class="fn">useFileUpload</span> } <span class="kw">from</span> <span class="str">'react-dropkit'</span>
 
@@ -729,277 +432,198 @@
 
   <span class="kw">const</span> <span class="fn">handleSubmit</span> = <span class="kw">async</span> (e) => {
     e.<span class="fn">preventDefault</span>()
-    <span class="kw">const</span> formData = <span class="kw">new</span> <span class="fn">FormData</span>()
-    formData.<span class="fn">append</span>(<span class="str">'name'</span>, name)
-    <span class="kw">if</span> (files[<span class="num">0</span>]) formData.<span class="fn">append</span>(<span class="str">'avatar'</span>, files[<span class="num">0</span>].file)
-
-    <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'/api/profile'</span>, { <span class="attr">method</span>: <span class="str">'POST'</span>, <span class="attr">body</span>: formData })
+    <span class="kw">const</span> fd = <span class="kw">new</span> <span class="fn">FormData</span>()
+    fd.<span class="fn">append</span>(<span class="str">'name'</span>, name)
+    <span class="kw">if</span> (files[<span class="num">0</span>]) fd.<span class="fn">append</span>(<span class="str">'avatar'</span>, files[<span class="num">0</span>].file)
+    <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'/api/profile'</span>, { <span class="attr">method</span>: <span class="str">'POST'</span>, <span class="attr">body</span>: fd })
   }
 
   <span class="kw">return</span> (
     <span class="tag">&lt;form</span> <span class="attr">onSubmit</span>={handleSubmit}<span class="tag">&gt;</span>
-      <span class="tag">&lt;input</span> <span class="attr">value</span>={name} <span class="attr">onChange</span>={e => <span class="fn">setName</span>(e.target.value)} <span class="attr">placeholder</span>=<span class="str">"Name"</span> <span class="tag">/&gt;</span>
-
-      <span class="cmt">// File drop zone as part of the form</span>
+      <span class="tag">&lt;input</span> <span class="attr">value</span>={name} <span class="attr">onChange</span>={e => <span class="fn">setName</span>(e.target.value)} <span class="tag">/&gt;</span>
       <span class="tag">&lt;div</span> {<span class="fn">...getRootProps</span>()}<span class="tag">&gt;</span>
         <span class="tag">&lt;input</span> {<span class="fn">...getInputProps</span>()} <span class="attr">ref</span>={inputRef} <span class="tag">/&gt;</span>
-        <span class="tag">&lt;p&gt;</span>Drop avatar image here<span class="tag">&lt;/p&gt;</span>
+        <span class="tag">&lt;p&gt;</span>Drop avatar here<span class="tag">&lt;/p&gt;</span>
       <span class="tag">&lt;/div&gt;</span>
-
       <span class="tag">&lt;button</span> <span class="attr">type</span>=<span class="str">"submit"</span><span class="tag">&gt;</span>Save Profile<span class="tag">&lt;/button&gt;</span>
     <span class="tag">&lt;/form&gt;</span>
   )
 }</pre>
         </div>
-
-        <!-- Single file -->
-        <div class="tab-panel" id="tab-single">
-          <div class="code-header">
-            <span class="code-filename">AvatarUpload.tsx</span>
-            <button class="code-copy" onclick="copyCode(this)">Copy</button>
-          </div>
+        <div class="tab-panel" id="t-single">
+          <div class="code-header"><span class="code-fname">AvatarUpload.tsx</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
           <pre><span class="kw">import</span> { <span class="fn">useFileUpload</span> } <span class="kw">from</span> <span class="str">'react-dropkit'</span>
 
-<span class="cmt">// Single file — adding a new one replaces the previous.</span>
 <span class="kw">export function</span> <span class="fn">AvatarUpload</span>() {
   <span class="kw">const</span> { files, getRootProps, getInputProps, inputRef } = <span class="fn">useFileUpload</span>({
     <span class="attr">multiple</span>: <span class="kw">false</span>,
     <span class="attr">validation</span>: { <span class="attr">accept</span>: [<span class="str">'image/*'</span>], <span class="attr">maxSize</span>: <span class="num">2</span> * <span class="num">1024</span> * <span class="num">1024</span> },
   })
 
-  <span class="kw">const</span> preview = files[<span class="num">0</span>]?.preview
-
   <span class="kw">return</span> (
-    <span class="tag">&lt;div</span> {<span class="fn">...getRootProps</span>()} <span class="attr">style</span>={{ <span class="attr">width</span>: <span class="num">96</span>, <span class="attr">height</span>: <span class="num">96</span>, <span class="attr">borderRadius</span>: <span class="str">'50%'</span> }}<span class="tag">&gt;</span>
+    <span class="tag">&lt;div</span> {<span class="fn">...getRootProps</span>()}
+      <span class="attr">style</span>={{ <span class="attr">width</span>: <span class="num">96</span>, <span class="attr">height</span>: <span class="num">96</span>, <span class="attr">borderRadius</span>: <span class="str">'50%'</span>, <span class="attr">cursor</span>: <span class="str">'pointer'</span> }}
+    <span class="tag">&gt;</span>
       <span class="tag">&lt;input</span> {<span class="fn">...getInputProps</span>()} <span class="attr">ref</span>={inputRef} <span class="tag">/&gt;</span>
-      {preview
-        ? <span class="tag">&lt;img</span> <span class="attr">src</span>={preview} <span class="attr">style</span>={{ <span class="attr">width</span>: <span class="str">'100%'</span>, <span class="attr">borderRadius</span>: <span class="str">'50%'</span> }} <span class="tag">/&gt;</span>
-        : <span class="tag">&lt;span&gt;</span>Click to upload<span class="tag">&lt;/span&gt;</span>
+      {files[<span class="num">0</span>]?.preview
+        ? <span class="tag">&lt;img</span> <span class="attr">src</span>={files[<span class="num">0</span>].preview} <span class="attr">style</span>={{ <span class="attr">borderRadius</span>: <span class="str">'50%'</span> }} <span class="tag">/&gt;</span>
+        : <span class="tag">&lt;span&gt;</span>Upload photo<span class="tag">&lt;/span&gt;</span>
       }
     <span class="tag">&lt;/div&gt;</span>
   )
 }</pre>
         </div>
+        <div class="tab-panel" id="t-progress">
+          <div class="code-header"><span class="code-fname">ProgressUpload.tsx</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="tag">&lt;Dropzone</span>
+  <span class="attr">onUpload</span>={(file) => <span class="kw">new</span> <span class="fn">Promise</span>((resolve, reject) => {
+    <span class="kw">const</span> xhr = <span class="kw">new</span> <span class="fn">XMLHttpRequest</span>()
+    <span class="kw">const</span> fd = <span class="kw">new</span> <span class="fn">FormData</span>()
+    fd.<span class="fn">append</span>(<span class="str">'file'</span>, file.file)
 
-        <!-- Progress -->
-        <div class="tab-panel" id="tab-progress">
-          <div class="code-header">
-            <span class="code-filename">UploadWithProgress.tsx</span>
-            <button class="code-copy" onclick="copyCode(this)">Copy</button>
-          </div>
-          <pre><span class="kw">import</span> { <span class="type">Dropzone</span> } <span class="kw">from</span> <span class="str">'react-dropkit'</span>
+    xhr.upload.<span class="attr">onprogress</span> = (e) => {
+      <span class="kw">if</span> (e.lengthComputable) {
+        <span class="cmt">// real progress from the server</span>
+        <span class="kw">const</span> pct = <span class="fn">Math</span>.round((e.loaded / e.total) * <span class="num">100</span>)
+      }
+    }
 
-<span class="cmt">// Real progress via XHR — works with any backend that supports it.</span>
-<span class="kw">export function</span> <span class="fn">UploadWithProgress</span>() {
-  <span class="kw">return</span> (
-    <span class="tag">&lt;Dropzone</span>
-      <span class="attr">onUpload</span>={(file) => <span class="kw">new</span> <span class="fn">Promise</span>((resolve, reject) => {
-        <span class="kw">const</span> xhr = <span class="kw">new</span> <span class="fn">XMLHttpRequest</span>()
-        <span class="kw">const</span> formData = <span class="kw">new</span> <span class="fn">FormData</span>()
-        formData.<span class="fn">append</span>(<span class="str">'file'</span>, file.file)
-
-        xhr.upload.<span class="attr">onprogress</span> = (e) => {
-          <span class="kw">if</span> (e.lengthComputable) {
-            <span class="kw">const</span> pct = <span class="fn">Math</span>.round((e.loaded / e.total) * <span class="num">100</span>)
-            <span class="cmt">// update your own progress state here</span>
-          }
-        }
-
-        xhr.<span class="attr">onload</span> = () =>
-          xhr.status === <span class="num">200</span> ? <span class="fn">resolve</span>() : <span class="fn">reject</span>(<span class="kw">new</span> <span class="fn">Error</span>(<span class="str">'Failed'</span>))
-        xhr.<span class="attr">onerror</span> = () => <span class="fn">reject</span>(<span class="kw">new</span> <span class="fn">Error</span>(<span class="str">'Network error'</span>))
-
-        xhr.<span class="fn">open</span>(<span class="str">'POST'</span>, <span class="str">'/api/upload'</span>)
-        xhr.<span class="fn">send</span>(formData)
-      })}
-    <span class="tag">/&gt;</span>
-  )
-}</pre>
+    xhr.<span class="attr">onload</span> = () =>
+      xhr.status === <span class="num">200</span> ? <span class="fn">resolve</span>() : <span class="fn">reject</span>(<span class="kw">new</span> <span class="fn">Error</span>(<span class="str">'Failed'</span>))
+    xhr.<span class="attr">onerror</span> = () => <span class="fn">reject</span>(<span class="kw">new</span> <span class="fn">Error</span>(<span class="str">'Network error'</span>))
+    xhr.<span class="fn">open</span>(<span class="str">'POST'</span>, <span class="str">'/api/upload'</span>)
+    xhr.<span class="fn">send</span>(fd)
+  })}
+<span class="tag">/&gt;</span></pre>
         </div>
-
       </div>
     </div>
   </section>
 </div>
-</div>
 
-<!-- API REFERENCE -->
-<div class="wrapper">
-  <section class="props-section" id="api">
-    <div class="section-label">API Reference</div>
-    <h2 class="section-title">Every prop,<br>documented.</h2>
+<!-- API -->
+<div style="background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+<div class="wrap">
+  <section id="api">
+    <div class="sec-label">API Reference</div>
+    <h2 class="sec-title">Every prop, documented.</h2>
+    <div style="margin-top:44px">
 
-    <div style="margin-top: 48px;">
-
-      <!-- Dropzone props -->
-      <div class="props-group">
-        <div class="props-group-title"><code>&lt;Dropzone /&gt;</code> props</div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Prop</th><th>Type</th><th>Description</th></tr></thead>
-            <tbody>
-              <tr><td>validation</td><td>ValidationOptions</td><td>File type, size, and count rules. See ValidationOptions below.</td></tr>
-              <tr><td>multiple</td><td>boolean</td><td>Allow multiple files. Default: true. Set to false for single-file mode — new file replaces previous.</td></tr>
-              <tr><td>disabled</td><td>boolean</td><td>Disables the drop zone entirely. Default: false.</td></tr>
-              <tr><td>onFilesAdded</td><td>(files: UploadedFile[]) => void</td><td>Fires when new files pass validation and are added to the list.</td></tr>
-              <tr><td>onFilesChange</td><td>(files: UploadedFile[]) => void</td><td>Fires on every change — add, remove, clear. Always reflects the current files array. Use this to sync external state.</td></tr>
-              <tr><td>onFileRemoved</td><td>(id: string) => void</td><td>Fires when a file is removed from the list.</td></tr>
-              <tr><td>onUpload</td><td>(file: UploadedFile) => Promise&lt;void&gt;</td><td>Your upload handler. The library manages status and progress around your Promise.</td></tr>
-              <tr><td>onError</td><td>(error: string, file?: UploadedFile) => void</td><td>Fires on validation failure or upload error.</td></tr>
-              <tr><td>className</td><td>string</td><td>Custom class applied to the outer wrapper element.</td></tr>
-              <tr><td>children</td><td>ReactNode</td><td>Override the default drop zone UI while keeping all logic.</td></tr>
-            </tbody>
-          </table>
-        </div>
+      <div class="prop-group">
+        <div class="prop-title"><code>&lt;Dropzone /&gt;</code> props</div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Prop</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td>validation</td><td>ValidationOptions</td><td>File type, size, and count rules.</td></tr>
+            <tr><td>multiple</td><td>boolean</td><td>Allow multiple files. Default: true.</td></tr>
+            <tr><td>disabled</td><td>boolean</td><td>Disables the drop zone entirely.</td></tr>
+            <tr><td>onFilesAdded</td><td>(files: UploadedFile[]) => void</td><td>Fires when new files pass validation.</td></tr>
+            <tr><td>onFilesChange</td><td>(files: UploadedFile[]) => void</td><td>Fires on every change. Always reflects the current files array. Use to sync external state.</td></tr>
+            <tr><td>onFileRemoved</td><td>(id: string) => void</td><td>Fires when a file is removed.</td></tr>
+            <tr><td>onUpload</td><td>(file: UploadedFile) => Promise&lt;void&gt;</td><td>Your upload handler. Library manages status around your Promise.</td></tr>
+            <tr><td>onError</td><td>(error: string) => void</td><td>Fires on validation failure or upload error.</td></tr>
+            <tr><td>className</td><td>string</td><td>Custom class on the wrapper element.</td></tr>
+            <tr><td>children</td><td>ReactNode</td><td>Override the default UI while keeping all logic.</td></tr>
+          </tbody>
+        </table></div>
       </div>
 
-      <!-- ValidationOptions -->
-      <div class="props-group">
-        <div class="props-group-title"><code>ValidationOptions</code></div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Option</th><th>Type</th><th>Description</th></tr></thead>
-            <tbody>
-              <tr><td>accept</td><td>string[]</td><td>Accepted file types. Supports wildcards (image/*), exact MIME types (image/png), and extensions (.pdf). Can mix all three.</td></tr>
-              <tr><td>maxSize</td><td>number</td><td>Maximum file size in bytes. e.g. 5 * 1024 * 1024 for 5MB.</td></tr>
-              <tr><td>minSize</td><td>number</td><td>Minimum file size in bytes.</td></tr>
-              <tr><td>maxFiles</td><td>number</td><td>Maximum total number of files allowed in the drop zone.</td></tr>
-            </tbody>
-          </table>
-        </div>
+      <div class="prop-group">
+        <div class="prop-title"><code>ValidationOptions</code></div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Option</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td>accept</td><td>string[]</td><td>Wildcards (image/*), exact MIME types (image/png), extensions (.pdf). Mix freely.</td></tr>
+            <tr><td>maxSize</td><td>number</td><td>Max file size in bytes. e.g. 5 * 1024 * 1024 for 5MB.</td></tr>
+            <tr><td>minSize</td><td>number</td><td>Min file size in bytes.</td></tr>
+            <tr><td>maxFiles</td><td>number</td><td>Max total files allowed.</td></tr>
+          </tbody>
+        </table></div>
       </div>
 
-      <!-- useFileUpload -->
-      <div class="props-group">
-        <div class="props-group-title"><code>useFileUpload()</code> returns</div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Value</th><th>Type</th><th>Description</th></tr></thead>
-            <tbody>
-              <tr><td>files</td><td>UploadedFile[]</td><td>The current list of files with status, progress, and preview.</td></tr>
-              <tr><td>isDragActive</td><td>boolean</td><td>True when a file is being dragged over the drop zone.</td></tr>
-              <tr><td>isDragReject</td><td>boolean</td><td>True when dragged files don't match the accepted types.</td></tr>
-              <tr><td>getRootProps()</td><td>HTMLAttributes</td><td>Spread onto your drop zone container. Handles all drag events, click, and keyboard.</td></tr>
-              <tr><td>getInputProps()</td><td>InputHTMLAttributes</td><td>Spread onto a hidden input element for file browser support.</td></tr>
-              <tr><td>inputRef</td><td>RefObject&lt;HTMLInputElement&gt;</td><td>Attach to the input element so clicking opens the file browser.</td></tr>
-              <tr><td>addFiles(files)</td><td>(File[]) => void</td><td>Programmatically add files to the list.</td></tr>
-              <tr><td>removeFile(id)</td><td>(string) => void</td><td>Remove a file by its ID.</td></tr>
-              <tr><td>clearFiles()</td><td>() => void</td><td>Remove all files and revoke all preview URLs.</td></tr>
-              <tr><td>uploadFile(id)</td><td>(string) => Promise&lt;void&gt;</td><td>Upload a single file by ID using the onUpload handler.</td></tr>
-              <tr><td>uploadAll()</td><td>() => Promise&lt;void&gt;</td><td>Upload all idle or failed files in parallel.</td></tr>
-              <tr><td>openFileDialog()</td><td>() => void</td><td>Programmatically open the native file browser.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- UploadedFile -->
-      <div class="props-group">
-        <div class="props-group-title"><code>UploadedFile</code> object</div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
-            <tbody>
-              <tr><td>id</td><td>string</td><td>Unique identifier for this file entry.</td></tr>
-              <tr><td>file</td><td>File</td><td>The native browser File object. Use file.file to get the raw File for FormData.</td></tr>
-              <tr><td>preview</td><td>string | undefined</td><td>Blob URL for image files. Use as img src for thumbnail. Undefined for non-images.</td></tr>
-              <tr><td>progress</td><td>number</td><td>Upload progress from 0–100.</td></tr>
-              <tr><td>status</td><td>FileStatus</td><td>'idle' | 'uploading' | 'success' | 'error'</td></tr>
-              <tr><td>error</td><td>string | undefined</td><td>Error message if the upload failed.</td></tr>
-            </tbody>
-          </table>
-        </div>
+      <div class="prop-group">
+        <div class="prop-title"><code>useFileUpload()</code> returns</div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Value</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td>files</td><td>UploadedFile[]</td><td>Current files with status, progress, preview.</td></tr>
+            <tr><td>isDragActive</td><td>boolean</td><td>True when dragging over the drop zone.</td></tr>
+            <tr><td>isDragReject</td><td>boolean</td><td>True when dragged files don't match accepted types.</td></tr>
+            <tr><td>getRootProps()</td><td>HTMLAttributes</td><td>Spread onto your container. Handles drag events, click, keyboard.</td></tr>
+            <tr><td>getInputProps()</td><td>InputHTMLAttributes</td><td>Spread onto a hidden input for file browser support.</td></tr>
+            <tr><td>inputRef</td><td>RefObject&lt;HTMLInputElement&gt;</td><td>Attach to input so clicking opens the file browser.</td></tr>
+            <tr><td>addFiles(files)</td><td>(File[]) => void</td><td>Programmatically add files.</td></tr>
+            <tr><td>removeFile(id)</td><td>(string) => void</td><td>Remove a file by ID.</td></tr>
+            <tr><td>clearFiles()</td><td>() => void</td><td>Remove all files and revoke preview URLs.</td></tr>
+            <tr><td>uploadAll()</td><td>() => Promise&lt;void&gt;</td><td>Upload all idle or failed files in parallel.</td></tr>
+            <tr><td>openFileDialog()</td><td>() => void</td><td>Programmatically open the native file browser.</td></tr>
+          </tbody>
+        </table></div>
       </div>
 
     </div>
   </section>
+</div>
 </div>
 
 <!-- COMPARISON -->
-<div style="background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
-<div class="wrapper">
-  <section class="compare-section">
-    <div class="section-label">Comparison</div>
-    <h2 class="section-title">How it stacks up.</h2>
-    <p class="section-sub" style="margin-bottom: 40px;">Against the libraries developers currently reach for.</p>
-    <div class="table-wrap">
-      <table class="compare-table">
-        <thead>
-          <tr>
-            <th>Feature</th>
-            <th>react-dropzone</th>
-            <th>react-dropkit</th>
-            <th>FilePond</th>
-          </tr>
-        </thead>
+<div class="wrap">
+  <section>
+    <div class="sec-label">Comparison</div>
+    <h2 class="sec-title">How it stacks up.</h2>
+    <p class="sec-sub" style="margin-bottom:36px">Against the libraries developers reach for today.</p>
+    <div class="tbl-wrap">
+      <table class="cmp-tbl">
+        <thead><tr><th>Feature</th><th>react-dropzone</th><th>react-dropkit ✦</th><th>FilePond</th></tr></thead>
         <tbody>
           <tr><td>Built-in UI</td><td><span class="no">✕</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
           <tr><td>Image previews</td><td><span class="no">✕ Manual</span></td><td><span class="yes">✓ Auto</span></td><td><span class="yes">✓</span></td></tr>
           <tr><td>Progress bars</td><td><span class="no">✕ Manual</span></td><td><span class="yes">✓ Built-in</span></td><td><span class="yes">✓</span></td></tr>
           <tr><td>Headless hook</td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="no">✕</span></td></tr>
-          <tr><td>TypeScript-first</td><td><span class="partial">⚠ @types/ needed</span></td><td><span class="yes">✓ Native</span></td><td><span class="partial">⚠ Afterthought</span></td></tr>
-          <tr><td>ESM + Next.js</td><td><span class="partial">⚠ Broken ESM</span></td><td><span class="yes">✓ Full ESM + CJS</span></td><td><span class="yes">✓</span></td></tr>
-          <tr><td>Accessibility</td><td><span class="partial">⚠ Partial</span></td><td><span class="yes">✓ WCAG</span></td><td><span class="partial">⚠ Partial</span></td></tr>
+          <tr><td>TypeScript-first</td><td><span class="par">⚠ @types/ needed</span></td><td><span class="yes">✓ Native</span></td><td><span class="par">⚠ Afterthought</span></td></tr>
+          <tr><td>ESM + Next.js</td><td><span class="par">⚠ Broken ESM</span></td><td><span class="yes">✓ Full ESM + CJS</span></td><td><span class="yes">✓</span></td></tr>
           <tr><td>Zero dependencies</td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="no">✕</span></td></tr>
-          <tr><td>Backend agnostic</td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="no">✕ Recommends service</span></td></tr>
-          <tr><td>Maintained actively</td><td><span class="no">✕ Slow updates</span></td><td><span class="yes">✓</span></td><td><span class="partial">⚠</span></td></tr>
+          <tr><td>Accessibility</td><td><span class="par">⚠ Partial</span></td><td><span class="yes">✓ WCAG</span></td><td><span class="par">⚠ Partial</span></td></tr>
         </tbody>
       </table>
     </div>
   </section>
 </div>
-</div>
 
 <!-- FOOTER -->
 <footer>
-  <div class="wrapper">
+  <div class="wrap">
     <p>
       <strong style="color:var(--text)">react-dropkit</strong> — MIT License<br>
-      Built with ♥ for the React community ·
-      <a href="https://github.com/abideen-program/react-dropkit" target="_blank">GitHub</a> ·
-      <a href="https://npmjs.com/package/react-dropkit" target="_blank">npm</a>
+      <a href="demo.html">Live Demo</a> · <a href="https://github.com/abideen-program/react-dropkit" target="_blank">GitHub</a> · <a href="https://npmjs.com/package/react-dropkit" target="_blank">npm</a>
     </p>
   </div>
 </footer>
 
 <script>
-  // Tab switching
-  function switchTab(btn, panelId) {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'))
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'))
-    btn.classList.add('active')
-    document.getElementById(panelId).classList.add('active')
-  }
-
-  // Copy install command
-  function copyInstall() {
-    navigator.clipboard.writeText('npm install react-dropkit')
-    const btn = document.querySelector('.copy-btn')
-    btn.textContent = 'Copied!'
-    setTimeout(() => btn.textContent = 'Copy', 2000)
-  }
-
-  // Copy code blocks
-  function copyCode(btn) {
-    const pre = btn.closest('.code-block').querySelector('pre')
-    navigator.clipboard.writeText(pre.innerText)
-    btn.textContent = 'Copied!'
-    setTimeout(() => btn.textContent = 'Copy', 2000)
-  }
-
-  // Highlight active sidebar link on scroll
-  const sections = document.querySelectorAll('section[id]')
-  const sidebarLinks = document.querySelectorAll('.sidebar-link')
-  window.addEventListener('scroll', () => {
-    let current = ''
-    sections.forEach(s => {
-      if (window.scrollY >= s.offsetTop - 100) current = s.id
-    })
-    sidebarLinks.forEach(l => {
-      l.classList.toggle('active', l.getAttribute('href') === '#' + current)
-    })
-  })
+function switchTab(btn,id){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'))
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'))
+  btn.classList.add('active')
+  document.getElementById(id).classList.add('active')
+}
+function copyInstall(){
+  navigator.clipboard.writeText('npm install react-dropkit')
+  const b=document.querySelector('#icmd').closest('.install-box').querySelector('.copy-btn')
+  b.textContent='Copied!';setTimeout(()=>b.textContent='Copy',2000)
+}
+function copyCode(btn){
+  const pre=btn.closest('.code-wrap, .code-block')?.querySelector('pre')||btn.closest('[style]')?.querySelector('pre')
+  if(pre){navigator.clipboard.writeText(pre.innerText);btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',2000)}
+}
+function toggleMenu(btn){
+  btn.classList.toggle('open')
+  document.getElementById('mobileMenu').classList.toggle('open')
+}
+function closeMenu(){
+  document.querySelector('.hamburger')?.classList.remove('open')
+  document.getElementById('mobileMenu').classList.remove('open')
+}
 </script>
-
 </body>
 </html>
