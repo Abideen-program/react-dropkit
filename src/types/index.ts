@@ -25,7 +25,14 @@ export interface DropzoneProps {
   validation?: ValidationOptions
   multiple?: boolean
   disabled?: boolean
+  autoUpload?: boolean
+  showUploadButton?: boolean
+  showClearButton?: boolean
+  uploadButtonLabel?: string
+  clearButtonLabel?: string
   className?: string
+  dropzoneClassName?: string
+  fileListClassName?: string
   children?: React.ReactNode
 }
 
@@ -50,6 +57,7 @@ export interface ProgressBarProps {
 export interface UseFileUploadOptions {
   validation?: ValidationOptions
   multiple?: boolean
+  autoUpload?: boolean
   onUpload?: (file: UploadedFile) => Promise<void>
   onFilesAdded?: (files: UploadedFile[]) => void
   onFileRemoved?: (id: string) => void

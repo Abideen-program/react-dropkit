@@ -1,16 +1,16 @@
 {
   "name": "react-dropkit",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "A modern, accessible, TypeScript-first React file upload library with drag-and-drop, previews, progress tracking, and zero backend opinions.",
   "author": "",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/abideen-program/react-dropkit"
+    "url": "https://github.com/YOUR_USERNAME/react-dropkit"
   },
-  "homepage": "https://abideen-program.github.io/react-dropkit/",
+  "homepage": "https://github.com/YOUR_USERNAME/react-dropkit#readme",
   "bugs": {
-    "url": "https://github.com/abideen-program/react-dropkit/issues"
+    "url": "https://github.com/YOUR_USERNAME/react-dropkit/issues"
   },
   "keywords": [
     "react",

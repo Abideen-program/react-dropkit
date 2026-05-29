@@ -182,7 +182,7 @@ nav{position:sticky;top:0;z-index:100;height:var(--nav-h);background:rgba(8,8,16
 <!-- HERO -->
 <div class="wrap">
   <section class="hero">
-    <div class="hero-badge">✦ Interactive Playground</div>
+    <div class="hero-badge">✦ Interactive Playground — v0.2.0</div>
     <h1>Experience<br><em>react-dropkit</em> live.</h1>
     <p>All demos run directly in your browser using the real File API. Drag real files, see real previews, watch real progress.</p>
     <div class="hero-links">
@@ -310,6 +310,42 @@ nav{position:sticky;top:0;z-index:100;height:var(--nav-h);background:rgba(8,8,16
       </div>
       <div class="file-list" id="list4"></div>
       <div class="err-box" id="err4" style="display:none"></div>
+    </div>
+  </div>
+
+
+  <!-- DEMO 5: MANUAL UPLOAD -->
+  <div class="demo-block" id="demo5">
+    <div class="demo-header">
+      <div class="demo-meta">
+        <div>
+          <div class="demo-tag">Demo 5</div>
+          <div class="demo-title" style="margin-top:8px">Manual Upload + Custom Buttons</div>
+          <div class="demo-desc">Set <code style="font-family:var(--ff-m);font-size:12px;color:var(--green);background:var(--green-dim);padding:1px 5px;border-radius:3px">autoUpload=false</code> and <code style="font-family:var(--ff-m);font-size:12px;color:var(--green);background:var(--green-dim);padding:1px 5px;border-radius:3px">showUploadButton</code>. Files sit idle until you click Upload.</div>
+        </div>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:var(--ff-m);font-size:12px;color:var(--green);white-space:nowrap;align-self:flex-start">autoUpload=false</div>
+      </div>
+    </div>
+    <div class="demo-body">
+      <div class="dz" id="dz5" tabindex="0" role="button" aria-label="File upload drop zone">
+        <input type="file" multiple accept="image/*,.pdf" onchange="handleFiles(event,'list5',{accept:['image/*','.pdf'],maxSize:10485760,maxFiles:5})" id="input5"/>
+        <div class="dz-icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg>
+        </div>
+        <div class="dz-title">Add files — they won't upload until you click the button</div>
+        <div class="dz-sub">or <a onclick="document.getElementById('input5').click();event.stopPropagation()">browse files</a></div>
+        <div class="dz-chips">
+          <span class="chip">image/*, .pdf</span>
+          <span class="chip">Max 10MB</span>
+          <span class="chip">Up to 5 files</span>
+        </div>
+      </div>
+      <div class="file-list" id="list5"></div>
+      <div class="err-box" id="err5" style="display:none"></div>
+      <div class="demo-actions" id="act5" style="display:none">
+        <button class="act-btn act-primary" onclick="uploadAll('list5','act5')">Send files</button>
+        <button class="act-btn act-ghost" onclick="clearFiles('list5','act5','err5')">Remove all</button>
+      </div>
     </div>
   </div>
 

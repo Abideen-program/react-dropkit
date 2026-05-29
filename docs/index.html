@@ -214,7 +214,7 @@ section{padding:52px 0}
   <section class="hero" id="home">
     <div class="hero-inner">
       <div>
-        <div class="hero-badge"><span class="badge-dot"></span> v0.1.0 — Now on npm</div>
+        <div class="hero-badge"><span class="badge-dot"></span> v0.2.0 — Now on npm</div>
         <h1>File uploads,<br><em>finally done right.</em></h1>
         <p class="hero-sub">A modern, accessible, TypeScript-first React library for file uploads. Drag-and-drop, image previews, progress tracking — with zero backend opinions.</p>
         <div class="hero-actions">
@@ -240,14 +240,15 @@ section{padding:52px 0}
   <span class="kw">return</span> (
     <span class="tag">&lt;Dropzone</span>
       <span class="attr">multiple</span>
+      <span class="attr">autoUpload</span>={<span class="kw">false</span>}
+      <span class="attr">showUploadButton</span>
+      <span class="attr">showClearButton</span>
+      <span class="attr">uploadButtonLabel</span>=<span class="str">"Send files"</span>
       <span class="attr">validation</span>={{
         <span class="attr">accept</span>: [<span class="str">'image/*'</span>, <span class="str">'.pdf'</span>],
         <span class="attr">maxSize</span>: <span class="num">5</span> * <span class="num">1024</span> * <span class="num">1024</span>,
         <span class="attr">maxFiles</span>: <span class="num">5</span>,
       }}
-      <span class="attr">onFilesChange</span>={(files) =>
-        <span class="fn">console</span>.log(files.length)
-      }
       <span class="attr">onUpload</span>={<span class="kw">async</span> (file) => {
         <span class="kw">const</span> fd = <span class="kw">new</span> <span class="fn">FormData</span>()
         fd.<span class="fn">append</span>(<span class="str">'file'</span>, file.file)
@@ -364,6 +365,7 @@ section{padding:52px 0}
     <div class="ex-wrap">
       <div class="tabs">
         <button class="tab-btn active" onclick="switchTab(this,'t-basic')">Basic</button>
+        <button class="tab-btn" onclick="switchTab(this,'t-manual')">Manual upload</button>
         <button class="tab-btn" onclick="switchTab(this,'t-headless')">Headless</button>
         <button class="tab-btn" onclick="switchTab(this,'t-form')">With a form</button>
         <button class="tab-btn" onclick="switchTab(this,'t-single')">Single file</button>
@@ -389,6 +391,33 @@ section{padding:52px 0}
   )
 }</pre>
         </div>
+        <div class="tab-panel" id="t-manual">
+          <div class="code-header"><span class="code-fname">ManualUpload.tsx</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+          <pre><span class="cmt">// Files sit idle until the user clicks Upload.</span>
+<span class="cmt">// Use autoUpload=false + showUploadButton together.</span>
+<span class="tag">&lt;Dropzone</span>
+  <span class="attr">autoUpload</span>={<span class="kw">false</span>}
+  <span class="attr">showUploadButton</span>
+  <span class="attr">showClearButton</span>
+  <span class="attr">uploadButtonLabel</span>=<span class="str">"Send files"</span>
+  <span class="attr">clearButtonLabel</span>=<span class="str">"Remove all"</span>
+  <span class="attr">validation</span>={{ <span class="attr">accept</span>: [<span class="str">'image/*'</span>, <span class="str">'.pdf'</span>], <span class="attr">maxFiles</span>: <span class="num">5</span> }}
+  <span class="attr">onUpload</span>={<span class="kw">async</span> (file) => {
+    <span class="kw">const</span> fd = <span class="kw">new</span> <span class="fn">FormData</span>()
+    fd.<span class="fn">append</span>(<span class="str">'file'</span>, file.file)
+    <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'/api/upload'</span>, { <span class="attr">method</span>: <span class="str">'POST'</span>, <span class="attr">body</span>: fd })
+  }}
+  <span class="attr">onError</span>={(err) => <span class="fn">console</span>.error(err)}
+<span class="tag">/&gt;</span>
+
+<span class="cmt">// Custom styling example</span>
+<span class="tag">&lt;Dropzone</span>
+  <span class="attr">className</span>=<span class="str">"my-wrapper"</span>
+  <span class="attr">dropzoneClassName</span>=<span class="str">"my-drop-area"</span>
+  <span class="attr">fileListClassName</span>=<span class="str">"my-file-list"</span>
+<span class="tag">/&gt;</span></pre>
+        </div>
+
         <div class="tab-panel" id="t-headless">
           <div class="code-header"><span class="code-fname">CustomUpload.tsx</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
           <pre><span class="kw">import</span> { <span class="fn">useFileUpload</span>, <span class="type">FileList</span> } <span class="kw">from</span> <span class="str">'react-dropkit'</span>
@@ -516,13 +545,20 @@ section{padding:52px 0}
           <tbody>
             <tr><td>validation</td><td>ValidationOptions</td><td>File type, size, and count rules.</td></tr>
             <tr><td>multiple</td><td>boolean</td><td>Allow multiple files. Default: true.</td></tr>
-            <tr><td>disabled</td><td>boolean</td><td>Disables the drop zone entirely.</td></tr>
+            <tr><td>disabled</td><td>boolean</td><td>Disables the drop zone entirely. Default: false.</td></tr>
+            <tr><td>autoUpload</td><td>boolean</td><td>Upload files immediately on add. Set to false for manual upload. Default: true.</td></tr>
+            <tr><td>showUploadButton</td><td>boolean</td><td>Renders a built-in Upload All button below the file list. Default: false.</td></tr>
+            <tr><td>showClearButton</td><td>boolean</td><td>Renders a built-in Clear All button below the file list. Default: false.</td></tr>
+            <tr><td>uploadButtonLabel</td><td>string</td><td>Custom label for the upload button. Default: "Upload All".</td></tr>
+            <tr><td>clearButtonLabel</td><td>string</td><td>Custom label for the clear button. Default: "Clear All".</td></tr>
             <tr><td>onFilesAdded</td><td>(files: UploadedFile[]) => void</td><td>Fires when new files pass validation.</td></tr>
-            <tr><td>onFilesChange</td><td>(files: UploadedFile[]) => void</td><td>Fires on every change. Always reflects the current files array. Use to sync external state.</td></tr>
+            <tr><td>onFilesChange</td><td>(files: UploadedFile[]) => void</td><td>Fires on every change. Always reflects the current files array.</td></tr>
             <tr><td>onFileRemoved</td><td>(id: string) => void</td><td>Fires when a file is removed.</td></tr>
             <tr><td>onUpload</td><td>(file: UploadedFile) => Promise&lt;void&gt;</td><td>Your upload handler. Library manages status around your Promise.</td></tr>
             <tr><td>onError</td><td>(error: string) => void</td><td>Fires on validation failure or upload error.</td></tr>
-            <tr><td>className</td><td>string</td><td>Custom class on the wrapper element.</td></tr>
+            <tr><td>className</td><td>string</td><td>Custom class on the outer wrapper.</td></tr>
+            <tr><td>dropzoneClassName</td><td>string</td><td>Custom class on the inner drop zone area.</td></tr>
+            <tr><td>fileListClassName</td><td>string</td><td>Custom class on the file list.</td></tr>
             <tr><td>children</td><td>ReactNode</td><td>Override the default UI while keeping all logic.</td></tr>
           </tbody>
         </table></div>

@@ -7,6 +7,7 @@ export function useFileUpload(options: UseFileUploadOptions = {}): UseFileUpload
   const {
     validation = {},
     multiple = true,
+    autoUpload = true,
     onUpload,
     onFilesAdded,
     onFileRemoved,
@@ -60,6 +61,13 @@ export function useFileUpload(options: UseFileUploadOptions = {}): UseFileUpload
       setFiles(next)
       onFilesChangeRef.current?.(next)
       onFilesAdded?.(uploadedFiles)
+
+      // Auto-upload immediately if autoUpload is enabled
+      if (autoUpload && onUpload) {
+        uploadedFiles.forEach((file) => {
+          uploadFileById(file.id)
+        })
+      }
     },
     [files.length, multiple, validateFiles, onError, onFilesAdded]
   )
@@ -82,11 +90,12 @@ export function useFileUpload(options: UseFileUploadOptions = {}): UseFileUpload
     onFilesChangeRef.current?.([])
   }, [])
 
-  const uploadFile = useCallback(
+  // Internal upload function — used by both uploadFile and autoUpload
+  const uploadFileById = useCallback(
     async (id: string) => {
       if (!onUpload) return
 
-      const file = files.find((f) => f.id === id)
+      const file = filesRef.current.find((f) => f.id === id)
       if (!file || file.status === 'uploading') return
 
       setFiles((prev) =>
@@ -96,18 +105,14 @@ export function useFileUpload(options: UseFileUploadOptions = {}): UseFileUpload
       )
 
       try {
-        await onUpload({
-          ...file,
-          status: 'uploading',
-        })
+        await onUpload({ ...file, status: 'uploading' })
         setFiles((prev) =>
           prev.map((f) =>
             f.id === id ? { ...f, status: 'success', progress: 100 } : f
           )
         )
       } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : 'Upload failed'
+        const errorMessage = err instanceof Error ? err.message : 'Upload failed'
         setFiles((prev) =>
           prev.map((f) =>
             f.id === id
@@ -118,13 +123,20 @@ export function useFileUpload(options: UseFileUploadOptions = {}): UseFileUpload
         onError?.(errorMessage, file)
       }
     },
-    [files, onUpload, onError]
+    [onUpload, onError]
+  )
+
+  const uploadFile = useCallback(
+    async (id: string) => {
+      await uploadFileById(id)
+    },
+    [uploadFileById]
   )
 
   const uploadAll = useCallback(async () => {
-    const pending = files.filter((f) => f.status === 'idle' || f.status === 'error')
-    await Promise.all(pending.map((f) => uploadFile(f.id)))
-  }, [files, uploadFile])
+    const pending = filesRef.current.filter((f) => f.status === 'idle' || f.status === 'error')
+    await Promise.all(pending.map((f) => uploadFileById(f.id)))
+  }, [uploadFileById])
 
   // Expose a way to update progress from outside (via onUpload callback)
   const updateProgress = useCallback((id: string, progress: number) => {

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import type { DropzoneProps } from '../../types'
 import { FileList } from '../FileList'
 import { useFileUpload } from '../../hooks/useFileUpload'
@@ -31,21 +31,51 @@ export const Dropzone: React.FC<DropzoneProps> = ({
   validation = {},
   multiple = true,
   disabled = false,
+  autoUpload = true,
+  showUploadButton = false,
+  showClearButton = false,
+  uploadButtonLabel = 'Upload All',
+  clearButtonLabel = 'Clear All',
   className = '',
+  dropzoneClassName = '',
+  fileListClassName = '',
   children,
 }) => {
-  const { files, isDragActive, isDragReject, getRootProps, getInputProps, removeFile, inputRef } =
-    useFileUpload({
-      validation,
-      multiple,
-      onUpload,
-      onFilesAdded,
-      onFileRemoved,
-      onFilesChange,
-      onError,
-    })
+  const {
+    files,
+    isDragActive,
+    isDragReject,
+    getRootProps,
+    getInputProps,
+    removeFile,
+    uploadAll,
+    clearFiles,
+    inputRef,
+  } = useFileUpload({
+    validation,
+    multiple,
+    onUpload: autoUpload ? onUpload : undefined,
+    onFilesAdded,
+    onFileRemoved,
+    onFilesChange,
+    onError,
+  })
 
-  const inputProps = getInputProps()
+  // For manual upload mode — called when user clicks Upload button
+  const handleManualUpload = useCallback(async () => {
+    if (!onUpload) return
+    // Temporarily wire onUpload into uploadAll by calling it per file
+    const pending = files.filter((f) => f.status === 'idle' || f.status === 'error')
+    await Promise.all(
+      pending.map(async (file) => {
+        try {
+          await onUpload(file)
+        } catch (err) {
+          onError?.(err instanceof Error ? err.message : 'Upload failed', file)
+        }
+      })
+    )
+  }, [files, onUpload, onError])
 
   const borderColor = disabled
     ? '#d1d5db'
@@ -64,6 +94,9 @@ export const Dropzone: React.FC<DropzoneProps> = ({
     : '#fafafa'
 
   const rootProps = getRootProps()
+  const inputProps = getInputProps()
+
+  const hasIdleFiles = files.some((f) => f.status === 'idle' || f.status === 'error')
 
   return (
     <div className={`rdk-dropzone-wrapper ${className}`}>
@@ -87,6 +120,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
           outline: 'none',
           userSelect: 'none',
         }}
+        className={dropzoneClassName}
         onFocus={(e) => {
           if (!disabled) {
             ;(e.currentTarget as HTMLDivElement).style.boxShadow =
@@ -155,47 +189,23 @@ export const Dropzone: React.FC<DropzoneProps> = ({
             <div
               style={{
                 display: 'flex',
-                gap: '12px',
+                gap: '8px',
                 flexWrap: 'wrap',
                 justifyContent: 'center',
               }}
             >
               {validation.accept && (
-                <span
-                  style={{
-                    fontSize: '11px',
-                    color: '#9ca3af',
-                    backgroundColor: '#f3f4f6',
-                    padding: '2px 8px',
-                    borderRadius: '9999px',
-                  }}
-                >
+                <span style={chipStyle}>
                   {validation.accept.join(', ')}
                 </span>
               )}
               {validation.maxSize && (
-                <span
-                  style={{
-                    fontSize: '11px',
-                    color: '#9ca3af',
-                    backgroundColor: '#f3f4f6',
-                    padding: '2px 8px',
-                    borderRadius: '9999px',
-                  }}
-                >
+                <span style={chipStyle}>
                   Max {Math.round(validation.maxSize / (1024 * 1024))}MB
                 </span>
               )}
               {validation.maxFiles && (
-                <span
-                  style={{
-                    fontSize: '11px',
-                    color: '#9ca3af',
-                    backgroundColor: '#f3f4f6',
-                    padding: '2px 8px',
-                    borderRadius: '9999px',
-                  }}
-                >
+                <span style={chipStyle}>
                   Up to {validation.maxFiles} file{validation.maxFiles === 1 ? '' : 's'}
                 </span>
               )}
@@ -204,10 +214,95 @@ export const Dropzone: React.FC<DropzoneProps> = ({
         )}
       </div>
 
-      {/* File list below dropzone */}
-      <FileList files={files} onRemove={removeFile} />
+      {/* File list */}
+      <FileList
+        files={files}
+        onRemove={removeFile}
+        className={fileListClassName}
+      />
+
+      {/* Upload / Clear buttons */}
+      {(showUploadButton || showClearButton) && files.length > 0 && (
+        <div
+          style={{
+            display: 'flex',
+            gap: '8px',
+            marginTop: '12px',
+            flexWrap: 'wrap',
+          }}
+        >
+          {showUploadButton && onUpload && hasIdleFiles && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                autoUpload ? uploadAll() : handleManualUpload()
+              }}
+              disabled={disabled}
+              style={uploadBtnStyle}
+              onMouseEnter={(e) => {
+                ;(e.currentTarget as HTMLButtonElement).style.backgroundColor = '#2563eb'
+              }}
+              onMouseLeave={(e) => {
+                ;(e.currentTarget as HTMLButtonElement).style.backgroundColor = '#3b82f6'
+              }}
+            >
+              {uploadButtonLabel}
+            </button>
+          )}
+          {showClearButton && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                clearFiles()
+              }}
+              disabled={disabled}
+              style={clearBtnStyle}
+              onMouseEnter={(e) => {
+                ;(e.currentTarget as HTMLButtonElement).style.backgroundColor = '#f3f4f6'
+              }}
+              onMouseLeave={(e) => {
+                ;(e.currentTarget as HTMLButtonElement).style.backgroundColor = 'transparent'
+              }}
+            >
+              {clearButtonLabel}
+            </button>
+          )}
+        </div>
+      )}
     </div>
   )
+}
+
+const chipStyle: React.CSSProperties = {
+  fontSize: '11px',
+  color: '#9ca3af',
+  backgroundColor: '#f3f4f6',
+  padding: '2px 8px',
+  borderRadius: '9999px',
+}
+
+const uploadBtnStyle: React.CSSProperties = {
+  padding: '8px 18px',
+  backgroundColor: '#3b82f6',
+  color: '#fff',
+  border: 'none',
+  borderRadius: '8px',
+  fontSize: '14px',
+  fontWeight: 500,
+  cursor: 'pointer',
+  transition: 'background-color 0.15s',
+}
+
+const clearBtnStyle: React.CSSProperties = {
+  padding: '8px 18px',
+  backgroundColor: 'transparent',
+  color: '#6b7280',
+  border: '1px solid #d1d5db',
+  borderRadius: '8px',
+  fontSize: '14px',
+  fontWeight: 500,
+  cursor: 'pointer',
+  transition: 'background-color 0.15s',
 }
 
 Dropzone.displayName = 'Dropzone'
